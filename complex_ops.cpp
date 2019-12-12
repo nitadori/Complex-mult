@@ -3,7 +3,7 @@
 #include <cstdio>
 #include <cstdlib>
 
-using cplx = std::complex<double>;
+using cmplx = std::complex<double>;
 
 struct ComplexMulLhs{
 	double sum;
@@ -12,7 +12,7 @@ struct ComplexMulLhs{
 
 	ComplexMulLhs(){}
 
-	ComplexMulLhs(const cplx &z){
+	ComplexMulLhs(const cmplx &z){
 		sum  = z.real() + z.imag();
 		diff = z.real() - z.imag();
 		imag = z.imag();
@@ -26,7 +26,7 @@ struct ComplexMulRhs{
 
 	ComplexMulRhs(){}
 	
-	ComplexMulRhs(const cplx &z){
+	ComplexMulRhs(const cmplx &z){
 		real = z.real();
 		imag = z.imag();
 		diff = real - imag;
@@ -38,7 +38,7 @@ struct ComplexMulAccum{
 	double imag;
 	double common;
 
-	operator cplx() const {
+	operator cmplx() const {
 		return {real+common, imag+common};
 	}
 
@@ -67,7 +67,7 @@ struct ComplexMulAccum{
 
 extern "C"
 __attribute__((noinline))
-void matmul1(cplx b[2][3], const cplx A[3][3], const cplx x[2][3]){
+void matmul1(cmplx b[2][3], const cmplx A[3][3], const cmplx x[2][3]){
 	for(int s=0; s<2; s++){
 		for(int i=0; i<3; i++){
 			b[s][i] = A[i][0] * x[s][0] 
@@ -78,7 +78,7 @@ void matmul1(cplx b[2][3], const cplx A[3][3], const cplx x[2][3]){
 }
 extern "C"
 __attribute__((noinline))
-void matmul_dag1(cplx b[2][3], const cplx A[3][3], const cplx x[2][3]){
+void matmul_dag1(cmplx b[2][3], const cmplx A[3][3], const cmplx x[2][3]){
 	for(int s=0; s<2; s++){
 		for(int i=0; i<3; i++){
 			b[s][i] = conj(A[0][i]) * x[s][0] 
@@ -89,7 +89,7 @@ void matmul_dag1(cplx b[2][3], const cplx A[3][3], const cplx x[2][3]){
 }
 extern "C"
 __attribute__((noinline))
-void matmul2(cplx b[2][3], const cplx A[3][3], const cplx x[2][3]){
+void matmul2(cmplx b[2][3], const cmplx A[3][3], const cmplx x[2][3]){
 	ComplexMulLhs Al[3][3];
 	for(int a=0; a<3; a++) for(int b=0; b<3; b++)  Al[a][b] = ComplexMulLhs(A[a][b]);
 	ComplexMulRhs xr[2][3];
@@ -101,13 +101,13 @@ void matmul2(cplx b[2][3], const cplx A[3][3], const cplx x[2][3]){
 			ba[s][i].madd(Al[i][1], xr[s][1]);
 			ba[s][i].madd(Al[i][2], xr[s][2]);
 
-			b[s][i] = cplx(ba[s][i]);
+			b[s][i] = cmplx(ba[s][i]);
 		}
 	}
 }
 extern "C"
 __attribute__((noinline))
-void matmul_dag2(cplx b[2][3], const cplx A[3][3], const cplx x[2][3]){
+void matmul_dag2(cmplx b[2][3], const cmplx A[3][3], const cmplx x[2][3]){
 	ComplexMulLhs Al[3][3];
 	for(int a=0; a<3; a++) for(int b=0; b<3; b++)  Al[a][b] = ComplexMulLhs(A[a][b]);
 	ComplexMulRhs xr[2][3];
@@ -119,13 +119,13 @@ void matmul_dag2(cplx b[2][3], const cplx A[3][3], const cplx x[2][3]){
 			ba[s][i].madd_lconj(Al[1][i], xr[s][1]);
 			ba[s][i].madd_lconj(Al[2][i], xr[s][2]);
 
-			b[s][i] = cplx(ba[s][i]);
+			b[s][i] = cmplx(ba[s][i]);
 		}
 	}
 }
 
 void mm_test(){
-	cplx A[3][3], x[2][3], b[2][3];
+	cmplx A[3][3], x[2][3], b[2][3];
 	for(int a=0; a<3; a++) for(int b=0; b<3; b++)  A[a][b] = {drand48(), drand48()};
 	for(int s=0; s<2; s++) for(int c=0; c<3; c++)  x[s][c] = {drand48(), drand48()};
 
@@ -150,17 +150,17 @@ void mm_test(){
 int main(){
 	srand48(57);
 
-	cplx lhs{drand48(), drand48()};
-	cplx rhs{drand48(), drand48()};
-	cplx prod1 = lhs * rhs;
-	cplx cprod1 = conj(lhs) * rhs;
+	cmplx lhs{drand48(), drand48()};
+	cmplx rhs{drand48(), drand48()};
+	cmplx prod1 = lhs * rhs;
+	cmplx cprod1 = conj(lhs) * rhs;
 
 
 	ComplexMulAccum acc;
 	acc.mult(ComplexMulLhs(lhs), ComplexMulRhs(rhs));
-	cplx prod2 = acc;
+	cmplx prod2 = acc;
 	acc.mult_lconj(ComplexMulLhs(lhs), ComplexMulRhs(rhs));
-	cplx cprod2 = acc;
+	cmplx cprod2 = acc;
 
 	std::cout << prod1 << std::endl;
 	std::cout << prod2 << std::endl;

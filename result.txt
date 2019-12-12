@@ -1,0 +1,80 @@
+matmul1:
+vsubsd
+       6
+vaddsd
+      18
+vmulsd
+      36
+vfmadd[1-3]{3}sd
+      30
+vfmsub[1-3]{3}sd
+       6
+vfnmadd[1-3]{3}sd
+       0
+vfnmsub[1-3]{3}sd
+       0
+vdivsd
+       0
+vmovsd
+      84
+
+matmul2:
+vsubsd
+      15
+vaddsd
+      21
+vmulsd
+      18
+vfmadd[1-3]{3}sd
+      36
+vfmsub[1-3]{3}sd
+       0
+vfnmadd[1-3]{3}sd
+       0
+vfnmsub[1-3]{3}sd
+       0
+vdivsd
+       0
+vmovsd
+      67
+
+matmul_dag1:
+vsubsd
+       6
+vaddsd
+      18
+vmulsd
+      36
+vfmadd[1-3]{3}sd
+      18
+vfmsub[1-3]{3}sd
+       0
+vfnmadd[1-3]{3}sd
+      18
+vfnmsub[1-3]{3}sd
+       0
+vdivsd
+       0
+vmovsd
+      84
+
+matmul_dag2:
+vsubsd
+      15
+vaddsd
+      21
+vmulsd
+      18
+vfmadd[1-3]{3}sd
+      24
+vfmsub[1-3]{3}sd
+      12
+vfnmadd[1-3]{3}sd
+       0
+vfnmsub[1-3]{3}sd
+       0
+vdivsd
+       0
+vmovsd
+      68
+

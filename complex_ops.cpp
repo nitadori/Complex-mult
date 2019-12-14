@@ -70,9 +70,25 @@ __attribute__((noinline))
 void matmul1(cmplx b[2][3], const cmplx A[3][3], const cmplx x[2][3]){
 	for(int s=0; s<2; s++){
 		for(int i=0; i<3; i++){
+#if 0
 			b[s][i] = A[i][0] * x[s][0] 
 			        + A[i][1] * x[s][1] 
 					+ A[i][2] * x[s][2] ;
+#else
+			double re = A[i][0].real() * x[s][0].real()
+			          - A[i][0].imag() * x[s][0].imag()
+			          + A[i][1].real() * x[s][1].real()
+			          - A[i][1].imag() * x[s][1].imag()
+			          + A[i][2].real() * x[s][2].real()
+			          - A[i][2].imag() * x[s][2].imag();
+			double im = A[i][0].real() * x[s][0].imag()
+			          + A[i][0].imag() * x[s][0].real()
+			          + A[i][1].real() * x[s][1].imag()
+			          + A[i][1].imag() * x[s][1].real()
+			          + A[i][2].real() * x[s][2].imag()
+			          + A[i][2].imag() * x[s][2].real();
+			b[s][i] = cmplx{re, im};
+#endif
 		}
 	}
 }
@@ -81,9 +97,25 @@ __attribute__((noinline))
 void matmul_dag1(cmplx b[2][3], const cmplx A[3][3], const cmplx x[2][3]){
 	for(int s=0; s<2; s++){
 		for(int i=0; i<3; i++){
+#if 0
 			b[s][i] = conj(A[0][i]) * x[s][0] 
 			        + conj(A[1][i]) * x[s][1] 
 					+ conj(A[2][i]) * x[s][2] ;
+#else
+			double re = A[0][i].real() * x[s][0].real()
+			          + A[0][i].imag() * x[s][0].imag()
+			          + A[1][i].real() * x[s][1].real()
+			          + A[1][i].imag() * x[s][1].imag()
+			          + A[2][i].real() * x[s][2].real()
+			          + A[2][i].imag() * x[s][2].imag();
+			double im = A[0][i].real() * x[s][0].imag()
+			          - A[0][i].imag() * x[s][0].real()
+			          + A[1][i].real() * x[s][1].imag()
+			          - A[1][i].imag() * x[s][1].real()
+			          + A[2][i].real() * x[s][2].imag()
+			          - A[2][i].imag() * x[s][2].real();
+			b[s][i] = cmplx{re, im};
+#endif
 		}
 	}
 }
